@@ -53,9 +53,14 @@ Sincronización y Dead-Locks.
 	  ![](/images/img.png)
 
 4. Una primera hipótesis para que se presente la condición de carrera para dicha función (pause and check), es que el programa consulta la lista cuyos valores va a imprimir, a la vez que otros hilos modifican sus valores. Para corregir esto, haga lo que sea necesario para que efectivamente, antes de imprimir los resultados actuales, se pausen todos los demás hilos. Adicionalmente, implemente la opción ‘resume’.
+   * **RESPUESTA:**
+	![](/images/img_1.png)
 
+   ![](/images/img_2.png)
 5. Verifique nuevamente el funcionamiento (haga clic muchas veces en el botón). Se cumple o no el invariante?.
-
+	* **RESPUESTA:**
+   Aún no se cumple.
+	  ![](/images/img_3.png)
 6. Identifique posibles regiones críticas en lo que respecta a la pelea de los inmortales. Implemente una estrategia de bloqueo que evite las condiciones de carrera. Recuerde que si usted requiere usar dos o más ‘locks’ simultáneamente, puede usar bloques sincronizados anidados:
 
 	```java
@@ -65,6 +70,8 @@ Sincronización y Dead-Locks.
 		}
 	}
 	```
+ 
+	* **RESPUESTA:** Implementamos 
 
 7. Tras implementar su estrategia, ponga a correr su programa, y ponga atención a si éste se llega a detener. Si es así, use los programas jps y jstack para identificar por qué el programa se detuvo.
 

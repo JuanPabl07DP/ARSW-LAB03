@@ -71,7 +71,7 @@ Sincronización y Dead-Locks.
 	}
 	```
  
-	* **RESPUESTA:** Implementamos 
+	* **RESPUESTA:** Se implementa la estrategia de bloqueo para evitar condiciones de carrera en el método fight() de la clase Immortal
 
 7. Tras implementar su estrategia, ponga a correr su programa, y ponga atención a si éste se llega a detener. Si es así, use los programas jps y jstack para identificar por qué el programa se detuvo.
 

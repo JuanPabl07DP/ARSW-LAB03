@@ -103,7 +103,6 @@ public class ControlFrame extends JFrame {
         toolBar.add(btnPauseAndCheck);
 
         JButton btnResume = new JButton("Resume");
-
         btnResume.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 for (Immortal im : immortals) {

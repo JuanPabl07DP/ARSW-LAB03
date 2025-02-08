@@ -17,6 +17,7 @@ public class Immortal extends Thread {
 
     private final Random r = new Random(System.currentTimeMillis());
     private boolean execution ;
+    private final Object healthLock = new Object();
 
 
     public Immortal(String name, List<Immortal> immortalsPopulation, int health, int defaultDamageValue, ImmortalUpdateReportCallback ucb) {
@@ -38,7 +39,6 @@ public class Immortal extends Thread {
 
             int nextFighterIndex = r.nextInt(immortalsPopulation.size());
 
-            //avoid self-fight
             if (nextFighterIndex == myIndex) {
                 nextFighterIndex = ((nextFighterIndex + 1) % immortalsPopulation.size());
             }
@@ -58,23 +58,32 @@ public class Immortal extends Thread {
     }
 
     public void fight(Immortal i2) {
+        Immortal first = this.name.compareTo(i2.name) < 0 ? this : i2;
+        Immortal second = this.name.compareTo(i2.name) < 0 ? i2 : this;
 
-        if (i2.getHealth() > 0) {
-            i2.changeHealth(i2.getHealth() - defaultDamageValue);
-            this.health += defaultDamageValue;
-            updateCallback.processReport("Fight: " + this + " vs " + i2+"\n");
-        } else {
-            updateCallback.processReport(this + " says:" + i2 + " is already dead!\n");
+        synchronized(first.healthLock) {
+            synchronized(second.healthLock) {
+                if (i2.getHealth() > 0) {
+                    i2.changeHealth(i2.getHealth() - defaultDamageValue);
+                    this.health += defaultDamageValue;
+                    updateCallback.processReport("Fight: " + this + " vs " + i2+"\n");
+                } else {
+                    updateCallback.processReport(this + " says:" + i2 + " is already dead!\n");
+                }
+            }
         }
-
     }
 
     public void changeHealth(int v) {
-        health = v;
+        synchronized(healthLock) {
+            health = v;
+        }
     }
 
     public int getHealth() {
-        return health;
+        synchronized(healthLock) {
+            return health;
+        }
     }
 
     public void setExecution(boolean execution) {this.execution = execution;}

@@ -1,0 +1,20 @@
+CONDICIONES DE CARRERA EN LA ELIMINACIÓN DE INMORTALES
+
+Al implementar la eliminación de inmortales muertos, se identificaron las siguientes condiciones de carrera:
+
+1. Múltiples hilos (inmortales) intentando modificar la lista compartida simultáneamente, lo que puede resultar en:
+   - ConcurrentModificationException
+   - Índices inválidos
+   - Intentos duplicados de eliminación
+
+2. Inconsistencia en el estado de la simulación debido a:
+   - Acceso no sincronizado a la lista de inmortales
+   - Modificación de la lista mientras otros hilos la están leyendo
+   - Posible pérdida de eliminaciones si múltiples hilos intentan remover el mismo inmortal
+
+3. La solución requiere:
+   - Sincronización al acceder y modificar la lista de inmortales
+   - Asegurar que las operaciones de selección de oponente y eliminación sean atómicas
+   - Mantener la consistencia del estado de la simulación
+
+Este problema ilustra la importancia de la sincronización adecuada cuando se trabaja con recursos compartidos en un entorno multihilo.

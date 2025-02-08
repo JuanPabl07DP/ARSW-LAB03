@@ -88,17 +88,15 @@ public class ControlFrame extends JFrame {
         btnPauseAndCheck.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
-                /*
-				 * COMPLETAR
-                 */
+                for (Immortal im : immortals) {
+                    im.setExecution(false);
+                }
                 int sum = 0;
                 for (Immortal im : immortals) {
                     sum += im.getHealth();
                 }
 
-                statisticsLabel.setText("<html>"+immortals.toString()+"<br>Health sum:"+ sum);
-                
-                
+                statisticsLabel.setText("<html>" + immortals.toString() + "<br>Health sum:" + sum);
 
             }
         });
@@ -108,10 +106,12 @@ public class ControlFrame extends JFrame {
 
         btnResume.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                /**
-                 * IMPLEMENTAR
-                 */
-
+                for (Immortal im : immortals) {
+                    im.setExecution(true);
+                }
+                synchronized (immortals) {
+                    immortals.notifyAll();
+                }
             }
         });
 

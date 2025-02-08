@@ -16,6 +16,7 @@ public class Immortal extends Thread {
     private final String name;
 
     private final Random r = new Random(System.currentTimeMillis());
+    private boolean execution ;
 
 
     public Immortal(String name, List<Immortal> immortalsPopulation, int health, int defaultDamageValue, ImmortalUpdateReportCallback ucb) {
@@ -25,6 +26,7 @@ public class Immortal extends Thread {
         this.immortalsPopulation = immortalsPopulation;
         this.health = health;
         this.defaultDamageValue=defaultDamageValue;
+        this.execution = true;
     }
 
     public void run() {
@@ -74,6 +76,8 @@ public class Immortal extends Thread {
     public int getHealth() {
         return health;
     }
+
+    public void setExecution(boolean execution) {this.execution = execution;}
 
     @Override
     public String toString() {

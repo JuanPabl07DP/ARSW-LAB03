@@ -4,36 +4,34 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Immortal extends Thread {
 
-    private ImmortalUpdateReportCallback updateCallback=null;
-    
-    private int health;
-    
+    private ImmortalUpdateReportCallback updateCallback = null;
+    private final AtomicInteger health;
     private int defaultDamageValue;
-
     private final List<Immortal> immortalsPopulation;
-
     private final String name;
-
     private final Random r = new Random(System.currentTimeMillis());
-    private boolean execution ;
+    private volatile boolean execution;
+    private volatile boolean alive;
 
-
-    public Immortal(String name, List<Immortal> immortalsPopulation, int health, int defaultDamageValue, ImmortalUpdateReportCallback ucb) {
+    public Immortal(String name, List<Immortal> immortalsPopulation, int health, int defaultDamageValue,
+                    ImmortalUpdateReportCallback ucb) {
         super(name);
-        this.updateCallback=ucb;
+        this.updateCallback = ucb;
         this.name = name;
         this.immortalsPopulation = immortalsPopulation;
-        this.health = health;
-        this.defaultDamageValue=defaultDamageValue;
+        this.health = new AtomicInteger(health);
+        this.defaultDamageValue = defaultDamageValue;
         this.execution = true;
+        this.alive = true;
     }
 
     public void run() {
-
-        while (this.getHealth() > 0 && immortalsPopulation.size() > 1) {
+        while (alive && this.getHealth() > 0 && !immortalsPopulation.isEmpty()) {
+            // Bloque de pausa
             synchronized (immortalsPopulation) {
                 while (!execution) {
                     try {
@@ -43,22 +41,33 @@ public class Immortal extends Thread {
                     }
                 }
             }
-            Immortal im;
 
-            int myIndex = immortalsPopulation.indexOf(this);
-
-            int nextFighterIndex = r.nextInt(immortalsPopulation.size());
-
-            // avoid self-fight
-            if (nextFighterIndex == myIndex) {
-                nextFighterIndex = ((nextFighterIndex + 1) % immortalsPopulation.size());
+            // Verificar condiciones de terminación
+            if (!alive || immortalsPopulation.size() <= 1) {
+                break;
             }
 
-            im = immortalsPopulation.get(nextFighterIndex);
+            Immortal opponent;
+            synchronized(immortalsPopulation) {
+                int myIndex = immortalsPopulation.indexOf(this);
+                if (myIndex == -1) {
+                    continue;
+                }
 
-            this.fight(im);
-            if (im.getHealth() <= 0) {
-                immortalsPopulation.remove(im);
+                int nextFighterIndex = r.nextInt(immortalsPopulation.size());
+                if (nextFighterIndex == myIndex) {
+                    nextFighterIndex = ((nextFighterIndex + 1) % immortalsPopulation.size());
+                }
+
+                try {
+                    opponent = immortalsPopulation.get(nextFighterIndex);
+                } catch (IndexOutOfBoundsException e) {
+                    continue;
+                }
+            }
+
+            if (opponent != null) {
+                fight(opponent);
             }
 
             try {
@@ -66,53 +75,57 @@ public class Immortal extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
         }
-
     }
 
     public void fight(Immortal i2) {
-        Immortal firstLock = minImmortalHash(i2);
+        Immortal firstLock = getLockOrderImmortal(i2);
         Immortal secondLock = firstLock == this ? i2 : this;
+
         synchronized (firstLock) {
             synchronized (secondLock) {
-                if (this.getHealth() > 0) {
-                    if (i2.getHealth() > 0) {
-                        i2.changeHealth(i2.getHealth() - defaultDamageValue);
-                        this.health += defaultDamageValue;
+                if (this.getHealth() > 0 && i2.getHealth() > 0) {
+                    int currentHealth = i2.getHealth();
+                    if (currentHealth > 0) {
+                        i2.changeHealth(currentHealth - defaultDamageValue);
+                        this.health.addAndGet(defaultDamageValue);
                         updateCallback.processReport("Fight: " + this + " vs " + i2 + "\n");
-                    } else {
-                        updateCallback.processReport(this + " says:" + i2 + " is already dead!\n");
+
+                        if (i2.getHealth() <= 0) {
+                            synchronized(immortalsPopulation) {
+                                immortalsPopulation.remove(i2);
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
-    public Immortal minImmortalHash(Immortal i2) {
-        Immortal minImmortal;
+    public Immortal getLockOrderImmortal(Immortal i2) {
         int immortalOneHash = System.identityHashCode(this);
         int immortalTwoHash = System.identityHashCode(i2);
-        if (immortalOneHash < immortalTwoHash) {
-            minImmortal = this;
-        } else if (immortalOneHash > immortalTwoHash) {
-            minImmortal = i2;
-        } else {
-            minImmortal = this;
-        }
-        return minImmortal;
+        return immortalOneHash < immortalTwoHash ? this : i2;
     }
 
-    public void changeHealth(int v) {health = v;}
+    public void changeHealth(int v) {
+        health.set(v);
+    }
 
-    public int getHealth() {return health;}
+    public int getHealth() {
+        return health.get();
+    }
 
-    public void setExecution(boolean execution) {this.execution = execution;}
+    public void setExecution(boolean execution) {
+        this.execution = execution;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
 
     @Override
     public String toString() {
-
-        return name + "[" + health + "]";
+        return name + "[" + health.get() + "]";
     }
-
 }

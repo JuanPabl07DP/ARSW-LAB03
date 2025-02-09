@@ -21,7 +21,7 @@ public class Producer extends Thread {
     private int dataSeed = 0;
     private Random rand=null;
 
-    public Producer(BlockingQueue<Integer> queue) {
+    public Producer(BlockingQueue<Integer> queue, int stockLimit) {
         this.queue = queue;
         rand = new Random(System.currentTimeMillis());
     }
@@ -32,8 +32,7 @@ public class Producer extends Thread {
             try {
                 dataSeed += rand.nextInt(100);
                 System.out.println("Producer added " + dataSeed);
-                queue.add(dataSeed);
-                Thread.sleep(1000);
+                queue.put(dataSeed);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
                 break;

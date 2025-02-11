@@ -3,6 +3,11 @@
 ### Arquitecturas de Software – ARSW
 
 
+## ***Realizado por:***
+
+- Juan Pablo Daza Pereira.
+- Nicolas Bernal Fuquene.
+
 #### Ejercicio – programación concurrente, condiciones de carrera y sincronización de hilos. EJERCICIO INDIVIDUAL O EN PAREJAS.
 
 ##### Parte I – Antes de terminar la clase.
@@ -19,7 +24,7 @@ RESPUESTA: Como podemos observar el consumo de CPU es considerable. Esto se debe
 3. Haga que ahora el productor produzca muy rápido, y el consumidor consuma lento. Teniendo en cuenta que el productor conoce un límite de Stock (cuantos elementos debería tener, a lo sumo en la cola), haga que dicho límite se respete. Revise el API de la colección usada como cola para ver cómo garantizar que dicho límite no se supere. Verifique que, al poner un límite pequeño para el 'stock', no haya consumo alto de CPU ni errores.
 
 
-##### Parte II. – Antes de terminar la clase.
+##### Parte II. – No se hace.
 
 Teniendo en cuenta los conceptos vistos de condición de carrera y sincronización, haga una nueva versión -más eficiente- del ejercicio anterior (el buscador de listas negras). En la versión actual, cada hilo se encarga de revisar el host en la totalidad del subconjunto de servidores que le corresponde, de manera que en conjunto se están explorando la totalidad de servidores. Teniendo esto en cuenta, haga que:
 

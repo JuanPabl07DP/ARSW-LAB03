@@ -21,8 +21,24 @@ RESPUESTA: Como podemos observar el consumo de CPU es considerable. Esto se debe
 ![imagen](images/1.png)
 
 2. Haga los ajustes necesarios para que la solución use más eficientemente la CPU, teniendo en cuenta que -por ahora- la producción es lenta y el consumo es rápido. Verifique con JVisualVM que el consumo de CPU se reduzca.
+
+Para que la solucion fuera mas eficiente, y teniendo en cuenta que la produccion es lenta y el consumo rapido, hicimos que consumer utilize el método queue.take(), que bloquea el hilo hasta que haya elementos disponibles en la cola, asi se evita que consumer este revisando infinitamente la cola en todo momento.
+
+![imagen](images/imagen1.png)
+
+Como podemos observar en la grafica, el consumo de CPU se redujo casi a 0%, lo cual demuestra la efectividad de los ajustes.
+
+![imagen](images/imagen2.png)
+
 3. Haga que ahora el productor produzca muy rápido, y el consumidor consuma lento. Teniendo en cuenta que el productor conoce un límite de Stock (cuantos elementos debería tener, a lo sumo en la cola), haga que dicho límite se respete. Revise el API de la colección usada como cola para ver cómo garantizar que dicho límite no se supere. Verifique que, al poner un límite pequeño para el 'stock', no haya consumo alto de CPU ni errores.
 
+Ahora el producer tiene un limite de stock, ahora hay un numero maximo de elementos en la cola en todo momento.
+
+![imagen](images/imagen4.png)
+
+Como podemos observar en la grafica, el consumo de CPU no hay errores ni tampoco hay un consumo alto de CPU al usar un limite pequeños para el stock.
+
+![imagen](images/imagen3.png)
 
 ##### Parte II. – No se hace.
 

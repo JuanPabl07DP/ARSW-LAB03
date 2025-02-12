@@ -36,6 +36,10 @@ Ahora el producer tiene un limite de stock, ahora hay un numero maximo de elemen
 
 ![imagen](images/imagen4.png)
 
+Tambien agregamos un .sleep al consumer para poder reducir la velocidad de consumo, con esto lo que logramos es que el producer sea  rápido y el consumer lento, sin incrementar el consumo de CPU.
+
+![imagen](images/imagen5.png)
+
 Como podemos observar en la grafica, el consumo de CPU no hay errores ni tampoco hay un consumo alto de CPU al usar un limite pequeños para el stock.
 
 ![imagen](images/imagen3.png)
